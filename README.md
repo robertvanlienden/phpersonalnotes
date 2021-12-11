@@ -9,7 +9,7 @@ PHPersonalnotes is build with Symfony/VueJS/Vuetify.
 * Create notebooks and store notes inside them
 * Symfony PHP Framework as back-end
 * VueJS/Vuetify Single Page Application as front-end
-* API endpoints that enable you to your own front-end
+* API endpoints that enable you to connect your own front-end
 
 If you want to use this app, you need to host it by yourself.
 See requirements for the requirements your hosting will need.
