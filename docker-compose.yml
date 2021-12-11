@@ -1,0 +1,59 @@
+version: "3.6"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx
+    ports:
+      - "8080:80"
+    links:
+      - php
+      - db
+    volumes:
+      - ./:/app
+      - ./dev/docker/nginx/development.conf:/etc/nginx/conf.d/default.conf
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: php-fpm
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    links:
+      - db
+
+  db:
+    image: mysql:5.7
+    ports:
+      - 3307:3306
+    volumes:
+      - db-volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: symfony
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+#  db:
+#    image: postgres:12
+#    environment:
+#      POSTGRES_USER: "symfony"
+#      POSTGRES_PASSWORD: "password"
+#      POSTGRES_DB: "symfony"
+#    ports:
+#      - "24432:5432"
+#    volumes:
+#      - first-symfony-project-db-volume:/var/lib/postgresql/data
+#      - ./dev/docker/db/init:/docker-entrypoint-initdb.d
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "24025:8025"
+
+volumes:
+  db-volume:
