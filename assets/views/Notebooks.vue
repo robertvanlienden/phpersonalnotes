@@ -74,17 +74,22 @@
 <script>
 import notebookService from "../services/notebook.service";
 import NotebookForm from "../components/forms/NotebookForm";
+import store from "../store";
 
 export default {
   name: "Notebooks",
   components: { NotebookForm },
   data() {
     return {
-      notebooks: null,
       error: false,
       errorMessage: "",
       warning: false,
       warningMessage: ""
+    }
+  },
+  computed: {
+    notebooks () {
+      return store.state.notebooks
     }
   },
   created() {
@@ -94,7 +99,7 @@ export default {
     getNotebooks() {
       notebookService.getNotebooks()
           .then((response) => {
-            this.notebooks = response;
+            this.$store.dispatch('getNotebooks', response);
           })
           .catch((error) => {
             this.error = true;
@@ -108,8 +113,8 @@ export default {
       notebookService.deleteNotebook(id)
           .then((response) => {
             this.warning = true;
+            this.$store.dispatch('removeNotebook', id);
             this.warningMessage = "You deleted the notebook " + name;
-            this.getNotebooks()
           })
       .catch((error) => {
         this.error = true;

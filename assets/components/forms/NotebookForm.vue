@@ -80,6 +80,7 @@ export default {
           title: this.title,
         }).then((response) => {
           this.response = true;
+          this.$store.dispatch('updateNotebook', response);
           this.responseMessage = "Notebook " +  response.title + " is updated!";
         }).catch((error) => {
           console.log(error);
