@@ -19,8 +19,10 @@ export default new Vuex.Store({
             notebook.title = payload.title
         },
         removeNotebook(state, payload) {
-            const notebook = state.notebooks.find(object => object.id === payload)
+            const notebook = state.notebooks.findIndex(object => object.id === payload)
             const lastItem = state.notebooks.at(-1);
+            console.log(notebook);
+            console.log(lastItem);
 
             if(notebook === lastItem) {
                 state.notebooks.splice(notebook, -1)

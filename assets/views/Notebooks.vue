@@ -1,6 +1,12 @@
 <template>
   <div>
-    <h1>Notebooks</h1>
+    <div>
+      <h1 class="d-inline">Notebooks</h1>
+      <v-btn class="ml-4" color="primary accent-4" elevation="1">
+        <v-icon @click="getNotebooks">mdi-reload</v-icon>
+      </v-btn>
+    </div>
+
     <v-alert
         type="error"
         dismissible
