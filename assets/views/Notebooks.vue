@@ -64,9 +64,10 @@
         </v-dialog>
         <v-btn
           color="error"
-          class="pa-3 ma-2">
+          class="pa-3 ma-2"
+          v-on:click="deleteNotebook(notebook.id, notebook.title)">
           Delete
-          <v-icon v-on:click="deleteNotebook(notebook.id, notebook.title)">
+          <v-icon>
             mdi-delete
           </v-icon>
         </v-btn>
@@ -103,9 +104,10 @@ export default {
   },
   methods: {
     getNotebooks() {
+      // TODO: Move API request to notes
       notebookService.getNotebooks()
           .then((response) => {
-            this.$store.dispatch('getNotebooks', response);
+            this.$store.dispatch('setNotebooks', response);
           })
           .catch((error) => {
             this.error = true;

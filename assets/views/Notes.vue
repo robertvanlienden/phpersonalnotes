@@ -1,10 +1,6 @@
 <template>
   <div>
     <h1>Notes</h1>
-    <v-progress-circular
-        v-if="!notes"
-        indeterminate
-    ></v-progress-circular>
     <v-alert
         type="error"
         dismissible
@@ -74,48 +70,47 @@
 <script>
 import noteService from "../services/note.service";
 import NoteForm from "../components/forms/NoteForm";
+import store from "../store";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Notes",
   components: { NoteForm },
   data() {
     return {
-      // dialog: false,
-      notes: null,
       error: false,
       errorMessage: "",
       warning: false,
       warningMessage: ""
     }
   },
+  computed: {
+    notes () {
+      return store.getters.getNotes(parseInt(this.$route.params.notebookId));
+    }
+  },
   created(){
-    this.getNotes();
+    this.$store.dispatch('setNotes');
   },
   watch: {
     dialog(val) {
-      !val && this.getNotes()
+      !val
     }
   },
   methods: {
     getNotes() {
-      noteService.getNotes(this.$route.params.notebookId)
-          .then((response) => {
-            this.notes = response;
-          })
-          .catch((error) => {
-            this.error = true;
-            this.errorMessage = "Something went wrong fetching the notebooks! Please try again!"
-          });
+      this.$store.dispatch('setNotes');
     },
     deleteNote(id, name) {
       if (!confirm("Are you sure you want to delete the note " + name + " including all the notes in this notebook? This will be definitive")) {
         return;
       }
       noteService.deleteNote(id)
+          // TODO: Move request to store action
           .then((response) => {
             this.warning = true;
+            this.$store.dispatch('removeNote', id);
             this.warningMessage = "You deleted the note " + name;
-            this.getNotes()
           })
           .catch((error) => {
             this.error = true;

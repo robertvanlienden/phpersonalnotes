@@ -108,11 +108,13 @@ export default {
         })
       } else {
         NoteService.updateNote(this.note.id, {
+          // TODO: Move request to store action
           title: this.title,
           content: this.content,
           notebook: this.notebook
         }).then((response) => {
           this.response = true;
+          this.$store.dispatch('updateNote', response);
           this.responseMessage = "Note " +  response.title + " is updated!";
         }).catch((error) => {
           this.error = true;
@@ -124,7 +126,6 @@ export default {
     getNotebooks() {
       NotebookService.getNotebooks().then((response) => {
         this.notebooks = response;
-        console.log(response);
       }).catch((response) => {
         this.notebooks = [ 'Error resolving notebooks! Try again later!']
       })
