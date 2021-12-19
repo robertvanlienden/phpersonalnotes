@@ -3,7 +3,7 @@
     <div>
       <h1 class="d-inline">Notes</h1>
       <v-btn class="ml-4" color="primary accent-4" elevation="1">
-        <v-icon @click="getNotes">mdi-reload</v-icon>
+        <v-icon @click="refreshNotes">mdi-reload</v-icon>
       </v-btn>
     </div>
     <v-alert
@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import noteService from "../services/note.service";
 import NoteForm from "../components/forms/NoteForm";
 import store from "../store";
 
@@ -94,7 +93,11 @@ export default {
     }
   },
   created(){
-    this.$store.dispatch('setNotes');
+    this.$store.dispatch('setNotes')
+        .catch(() => {
+          this.errorMessage = "Whoops! Something went wrong, try again later";
+          this.error = true;
+        });
   },
   watch: {
     dialog(val) {
@@ -102,24 +105,26 @@ export default {
     }
   },
   methods: {
-    getNotes() {
-      this.$store.dispatch('setNotes');
+    refreshNotes() {
+      this.$store.dispatch('setNotes')
+        .catch(() => {
+            this.errorMessage = "Can't update notes! Try again later.";
+            this.error = true;
+        });
     },
     deleteNote(id, name) {
       if (!confirm("Are you sure you want to delete the note " + name + " including all the notes in this notebook? This will be definitive")) {
         return;
       }
-      noteService.deleteNote(id)
-          // TODO: Move request to store action
-          .then((response) => {
-            this.warning = true;
-            this.$store.dispatch('removeNote', id);
-            this.warningMessage = "You deleted the note " + name;
-          })
-          .catch((error) => {
-            this.error = true;
-            this.errorMessage = "Something went wrong deleting the note " + name + "! Please try again!";
-          })
+      this.$store.dispatch('removeNote', id)
+        .then((response) => {
+          this.warning = true;
+          this.warningMessage = "You deleted the note " + name;
+        })
+        .catch(() => {
+          this.error = true;
+          this.errorMessage = "Something went wrong deleting the note " + name + "! Please try again!";
+        });
     }
   }
 }

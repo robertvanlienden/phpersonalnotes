@@ -94,6 +94,7 @@ export default {
     submitForm () {
       this.$refs.form.validate()
       if(!this.note) {
+        // TODO: Create a store action to add a note (nice to have "add note/notebook in modal") https://github.com/robertvanlienden/phpersonalnotes/issues/2
         NoteService.createNote({
           title: this.title,
           content: this.content,
@@ -107,21 +108,21 @@ export default {
           this.responseMessage = "Something went wrong!";
         })
       } else {
-        NoteService.updateNote(this.note.id, {
-          // TODO: Move request to store action
+        this.$store.dispatch('updateNote', {
+          id: this.note.id,
           title: this.title,
           content: this.content,
-          notebook: this.notebook
-        }).then((response) => {
-          this.response = true;
-          this.$store.dispatch('updateNote', response);
-          this.responseMessage = "Note " +  response.title + " is updated!";
-        }).catch((error) => {
-          this.error = true;
-          this.responseMessage = "Something went wrong!";
+          notebook: this.notebook,
         })
+          .then((response) => {
+            this.response = true;
+            this.responseMessage = "Note " +  response.title + " is updated!";
+          })
+          .catch(() => {
+            this.error = true;
+            this.errorMessage = "Something went wrong!";
+          });
       }
-
     },
     getNotebooks() {
       NotebookService.getNotebooks().then((response) => {

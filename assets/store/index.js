@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import TokenService from '../services/token.service'
 import noteService from "../services/note.service";
+import NoteService from "../services/note.service";
 
 Vue.use(Vuex)
 
@@ -67,16 +68,17 @@ export default new Vuex.Store({
     },
     actions: {
         setNotes({ commit }) {
-            noteService.getNotes()
-                .then((response) => {
-                    return new Promise(() => {
-                        commit('setNotes', response)
-                    })                })
-                .catch((error) => {
-                    // TODO: Catch errors in front-end
-                    console.log(error);
-                });
-
+            return new Promise((resolve, reject) => {
+                noteService.getNotes()
+                    .then((response) => {
+                        return new Promise(() => {
+                            commit('setNotes', response);
+                            resolve(response);
+                        })                })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            });
         },
         setNotebooks({ commit }, notebooks) {
             return new Promise(() => {
@@ -89,13 +91,29 @@ export default new Vuex.Store({
             })
         },
         updateNote({ commit }, note) {
-            return new Promise(() => {
-                commit('updateNote', note)
+            return new Promise((resolve, reject) => {
+                NoteService.updateNote(note.id, {
+                    title: note.title,
+                    content: note.content,
+                    notebook: note.notebook.id,
+                }).then((response) => {
+                    commit('updateNote', response)
+                    resolve(response);
+                }).catch((error) => {
+                    reject(error);
+                })
             })
         },
         removeNotebook({ commit }, notebookId) {
-            return new Promise(() => {
-                commit('removeNotebook', notebookId)
+            return new Promise((resolve, reject) => {
+                noteService.deleteNote(notebookId)
+                    .then((response) => {
+                        commit('removeNotebook', notebookId)
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
             })
         },
         removeNote({ commit }, noteId) {
