@@ -1,5 +1,5 @@
 # PHPersonal Notes 📓 - BETA RELEASE
-PHPPersonal notes is an application to store your personal notes!
+PHPersonal notes is an application to store your personal notes!
 
 ![screenshot](screenshots/001.gif)
 
