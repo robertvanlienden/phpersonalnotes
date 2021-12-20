@@ -109,7 +109,7 @@ export default new Vuex.Store({
                 NoteService.updateNote(note.id, {
                     title: note.title,
                     content: note.content,
-                    notebook: note.notebook.id,
+                    notebook: note.notebook,
                 }).then((response) => {
                     commit('updateNote', response)
                     resolve(response);
