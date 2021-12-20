@@ -132,7 +132,7 @@ export default new Vuex.Store({
         },
         removeNote({ commit }, noteId) {
             return new Promise((resolve, reject) => {
-                notebookService.deleteNotebook(noteId)
+                noteService.deleteNote(noteId)
                     .then((response) => {
                         commit('removeNote', noteId)
                         resolve(response);
