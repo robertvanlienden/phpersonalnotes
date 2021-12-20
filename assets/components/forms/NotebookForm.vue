@@ -65,6 +65,7 @@ export default {
     submitForm () {
       this.$refs.form.validate()
       if (!this.notebook) {
+        // TODO: Create a store action to add a note (nice to have "add note/notebook in modal") https://github.com/robertvanlienden/phpersonalnotes/issues/2
         NotebookService.createNotebook({
           title: this.title,
         }).then((response) => {
@@ -76,19 +77,17 @@ export default {
           this.responseMessage = "Something went wrong!";
         })
       } else {
-        NotebookService.updateNotebook(this.notebook.id, {
+        this.$store.dispatch('updateNotebook', {
+          id: this.notebook.id,
           title: this.title,
         }).then((response) => {
           this.response = true;
-          this.$store.dispatch('updateNotebook', response);
           this.responseMessage = "Notebook " +  response.title + " is updated!";
-        }).catch((error) => {
-          console.log(error);
+        }).catch(() => {
           this.error = true;
           this.responseMessage = "Something went wrong!";
-        })
+        });
       }
-
     },
   },
 }

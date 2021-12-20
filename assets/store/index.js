@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import TokenService from '../services/token.service'
 import noteService from "../services/note.service";
 import NoteService from "../services/note.service";
+import NotebookService from "../services/notebook.service";
+import notebookService from "../services/notebook.service";
 
 Vue.use(Vuex)
 
@@ -71,23 +73,35 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 noteService.getNotes()
                     .then((response) => {
-                        return new Promise(() => {
-                            commit('setNotes', response);
-                            resolve(response);
-                        })                })
+                        commit('setNotes', response);
+                        resolve(response);})
                     .catch((error) => {
                         reject(error);
                     });
             });
         },
-        setNotebooks({ commit }, notebooks) {
-            return new Promise(() => {
-                commit('setNotebooks', notebooks)
+        setNotebooks({ commit }) {
+            return new Promise((resolve, reject) => {
+                NotebookService.getNotebooks()
+                    .then((response) => {
+                        commit('setNotebooks', response)
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
             })
         },
         updateNotebook({ commit }, notebook) {
-            return new Promise(() => {
-                commit('updateNotebook', notebook)
+            return new Promise((resolve, reject) => {
+                NotebookService.updateNotebook(notebook.id, {
+                    title: notebook.title,
+                }).then((response) => {
+                    commit('updateNotebook', response)
+                    resolve(response);
+                }).catch((error) => {
+                    reject(error);
+                })
             })
         },
         updateNote({ commit }, note) {
@@ -106,7 +120,7 @@ export default new Vuex.Store({
         },
         removeNotebook({ commit }, notebookId) {
             return new Promise((resolve, reject) => {
-                noteService.deleteNote(notebookId)
+                notebookService.deleteNotebook(notebookId)
                     .then((response) => {
                         commit('removeNotebook', notebookId)
                         resolve(response);
@@ -117,8 +131,15 @@ export default new Vuex.Store({
             })
         },
         removeNote({ commit }, noteId) {
-            return new Promise(() => {
-                commit('removeNote', noteId)
+            return new Promise((resolve, reject) => {
+                notebookService.deleteNotebook(noteId)
+                    .then((response) => {
+                        commit('removeNote', noteId)
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    })
             })
         },
         login({ commit }) {
