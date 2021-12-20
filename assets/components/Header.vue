@@ -12,7 +12,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-menu offset-y v-if="isLoggedIn">
+      <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
               icon
@@ -52,17 +52,6 @@
               <v-list-item-title>Home</v-list-item-title>
             </v-list-item>
           </router-link>
-          <router-link to="/login" color="dark" v-if="!isLoggedIn">
-            <v-list-item>
-              <v-list-item-title>Login</v-list-item-title>
-            </v-list-item>
-          </router-link>
-          <router-link to="/register" color="dark" v-if="!isLoggedIn">
-            <v-list-item>
-              <v-list-item-title>Register</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
           <router-link to="/notebooks" color="dark"  v-if="isLoggedIn">
             <v-list-item>
               <v-list-item-title>Notebooks</v-list-item-title>
@@ -71,11 +60,6 @@
           <router-link to="/notes" color="dark"  v-if="isLoggedIn">
             <v-list-item>
               <v-list-item-title>All notes</v-list-item-title>
-            </v-list-item>
-          </router-link>
-          <router-link to="/logout" color="dark"  v-if="isLoggedIn">
-            <v-list-item>
-              <v-list-item-title>Logout</v-list-item-title>
             </v-list-item>
           </router-link>
         </v-list-item-group>
@@ -92,12 +76,20 @@ export default {
   data: () => ({
     drawer: false,
     group: null,
-    items: [
-      { title: 'Add note', to: '/add-note' },
-      { title: 'Add notebook', to: '/add-notebook' },
-    ],
   }),
   computed: {
+    items() {
+      if(this.isLoggedIn) {
+        return [
+          { title: 'Logout', to: '/logout' },
+        ];
+      } else {
+        return [
+          { title: 'Login', to: '/login' },
+          { title: 'Register', to: '/register' },
+        ];
+      }
+    },
     ...mapState(['isLoggedIn'])
   },
 }
