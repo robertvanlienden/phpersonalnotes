@@ -1,6 +1,12 @@
 <template>
   <div>
-    <h1>Notebooks</h1>
+    <div>
+      <h1 class="d-inline">Notebooks</h1>
+      <v-btn class="ml-4" color="primary accent-4" elevation="1">
+        <v-icon @click="getNotebooks">mdi-reload</v-icon>
+      </v-btn>
+    </div>
+
     <v-alert
         type="error"
         dismissible
@@ -58,9 +64,10 @@
         </v-dialog>
         <v-btn
           color="error"
-          class="pa-3 ma-2">
+          class="pa-3 ma-2"
+          v-on:click="deleteNotebook(notebook.id, notebook.title)">
           Delete
-          <v-icon v-on:click="deleteNotebook(notebook.id, notebook.title)">
+          <v-icon>
             mdi-delete
           </v-icon>
         </v-btn>
@@ -74,17 +81,22 @@
 <script>
 import notebookService from "../services/notebook.service";
 import NotebookForm from "../components/forms/NotebookForm";
+import store from "../store";
 
 export default {
   name: "Notebooks",
   components: { NotebookForm },
   data() {
     return {
-      notebooks: null,
       error: false,
       errorMessage: "",
       warning: false,
       warningMessage: ""
+    }
+  },
+  computed: {
+    notebooks () {
+      return store.state.notebooks
     }
   },
   created() {
@@ -92,29 +104,25 @@ export default {
   },
   methods: {
     getNotebooks() {
-      notebookService.getNotebooks()
-          .then((response) => {
-            this.notebooks = response;
-          })
-          .catch((error) => {
-            this.error = true;
-            this.errorMessage = "Something went wrong fetching the notebooks! Please try again!";
-          });
+      this.$store.dispatch('setNotebooks')
+        .catch(() => {
+          this.error = true;
+          this.errorMessage = "Something went wrong fetching the notebooks! Please try again!";
+        })
     },
     deleteNotebook(id, name) {
       if (!confirm("Are you sure you want to delete the notebook " + name + " including all the notes in this notebook? This will be definitive")){
         return;
       }
-      notebookService.deleteNotebook(id)
-          .then((response) => {
-            this.warning = true;
-            this.warningMessage = "You deleted the notebook " + name;
-            this.getNotebooks()
-          })
-      .catch((error) => {
-        this.error = true;
-        this.errorMessage = "Something went wrong deleting the notebook: " + name + "! Please try again!";
-      })
+      this.$store.dispatch('removeNotebook', id)
+        .then(() => {
+          this.warning = true;
+          this.warningMessage = "You deleted the notebook " + name;
+        })
+        .catch(() => {
+          this.error = true;
+          this.errorMessage = "Something went wrong deleting the notebook: " + name + "! Please try again!";
+        })
     }
   }
 

@@ -60,6 +60,7 @@
 <script>
 import NotebookService from "../../services/notebook.service";
 import NoteService from "../../services/note.service";
+import store from "../../store";
 
 export default {
   name: "NoteForm",
@@ -72,17 +73,27 @@ export default {
     ],
     content: '',
     notebook: null,
-    notebooks: [
-      'Loading...'
-    ],
     buttonText: "Add note",
     response: false,
     responseMessage: "",
     error: false,
     errorMessage: "",
   }),
+  computed: {
+    notebooks() {
+      if(store.state.notebooks.length) {
+        return store.state.notebooks
+      } else {
+        return ["loading..."];
+      }
+    }
+  },
   created() {
-    this.getNotebooks();
+    this.$store.dispatch('setNotebooks')
+      .catch(() => {
+        this.error = true;
+        this.errorMessage = "Something went wrong fetching the notebooks!"
+      })
     if (this.note) {
       this.title = this.note.title;
       this.content = this.note.content;
@@ -94,6 +105,7 @@ export default {
     submitForm () {
       this.$refs.form.validate()
       if(!this.note) {
+        // TODO: Create a store action to add a note (nice to have "add note/notebook in modal") https://github.com/robertvanlienden/phpersonalnotes/issues/2
         NoteService.createNote({
           title: this.title,
           content: this.content,
@@ -107,28 +119,22 @@ export default {
           this.responseMessage = "Something went wrong!";
         })
       } else {
-        NoteService.updateNote(this.note.id, {
+        this.$store.dispatch('updateNote', {
+          id: this.note.id,
           title: this.title,
           content: this.content,
-          notebook: this.notebook
-        }).then((response) => {
-          this.response = true;
-          this.responseMessage = "Note " +  response.title + " is updated!";
-        }).catch((error) => {
-          this.error = true;
-          this.responseMessage = "Something went wrong!";
+          notebook: this.notebook,
         })
+          .then((response) => {
+            this.response = true;
+            this.responseMessage = "Note " +  response.title + " is updated!";
+          })
+          .catch(() => {
+            this.error = true;
+            this.errorMessage = "Something went wrong!";
+          });
       }
-
     },
-    getNotebooks() {
-      NotebookService.getNotebooks().then((response) => {
-        this.notebooks = response;
-        console.log(response);
-      }).catch((response) => {
-        this.notebooks = [ 'Error resolving notebooks! Try again later!']
-      })
-    }
   },
 }
 </script>

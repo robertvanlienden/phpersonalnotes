@@ -1,10 +1,11 @@
 <template>
   <div>
-    <h1>Notes</h1>
-    <v-progress-circular
-        v-if="!notes"
-        indeterminate
-    ></v-progress-circular>
+    <div>
+      <h1 class="d-inline">Notes</h1>
+      <v-btn class="ml-4" color="primary accent-4" elevation="1">
+        <v-icon @click="refreshNotes">mdi-reload</v-icon>
+      </v-btn>
+    </div>
     <v-alert
         type="error"
         dismissible
@@ -72,55 +73,58 @@
 </template>
 
 <script>
-import noteService from "../services/note.service";
 import NoteForm from "../components/forms/NoteForm";
+import store from "../store";
 
 export default {
   name: "Notes",
   components: { NoteForm },
   data() {
     return {
-      // dialog: false,
-      notes: null,
       error: false,
       errorMessage: "",
       warning: false,
       warningMessage: ""
     }
   },
+  computed: {
+    notes () {
+      return store.getters.getNotes(parseInt(this.$route.params.notebookId));
+    }
+  },
   created(){
-    this.getNotes();
+    this.$store.dispatch('setNotes')
+        .catch(() => {
+          this.errorMessage = "Whoops! Something went wrong, try again later";
+          this.error = true;
+        });
   },
   watch: {
     dialog(val) {
-      !val && this.getNotes()
+      !val
     }
   },
   methods: {
-    getNotes() {
-      noteService.getNotes(this.$route.params.notebookId)
-          .then((response) => {
-            this.notes = response;
-          })
-          .catch((error) => {
+    refreshNotes() {
+      this.$store.dispatch('setNotes')
+        .catch(() => {
+            this.errorMessage = "Can't update notes! Try again later.";
             this.error = true;
-            this.errorMessage = "Something went wrong fetching the notebooks! Please try again!"
-          });
+        });
     },
     deleteNote(id, name) {
       if (!confirm("Are you sure you want to delete the note " + name + " including all the notes in this notebook? This will be definitive")) {
         return;
       }
-      noteService.deleteNote(id)
-          .then((response) => {
-            this.warning = true;
-            this.warningMessage = "You deleted the note " + name;
-            this.getNotes()
-          })
-          .catch((error) => {
-            this.error = true;
-            this.errorMessage = "Something went wrong deleting the note " + name + "! Please try again!";
-          })
+      this.$store.dispatch('removeNote', id)
+        .then((response) => {
+          this.warning = true;
+          this.warningMessage = "You deleted the note " + name;
+        })
+        .catch(() => {
+          this.error = true;
+          this.errorMessage = "Something went wrong deleting the note " + name + "! Please try again!";
+        });
     }
   }
 }
