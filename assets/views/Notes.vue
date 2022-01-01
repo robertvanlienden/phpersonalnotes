@@ -18,6 +18,9 @@
         v-if="warning">
       {{ warningMessage }}
     </v-alert>
+    <div v-if="!notes.length">
+      No notes found! <router-link to="/add-note">Add a note</router-link>
+    </div>
         <v-card
             v-for="note in notes"
             elevation="3"
