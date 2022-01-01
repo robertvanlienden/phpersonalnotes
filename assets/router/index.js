@@ -11,6 +11,7 @@ import NotFound from "../views/NotFound";
 import TokenService from "../services/token.service";
 import store from '../store';
 import Notes from "../views/Notes";
+import Note from "../views/Note";
 
 const requireAuth = function (to, from, next) {
     if (!TokenService.hasToken()) {
@@ -46,6 +47,7 @@ const router = new VueRouter({
         {path: '/logout', name: 'logout', beforeEnter: logout},
         {path: '/notebooks', name: 'notebooks', component: Notebooks, beforeEnter: requireAuth},
         {path: '/notes', name: 'notes', component: Notes, beforeEnter: requireAuth},
+        {path: '/note/:noteId', name: 'note', component: Note, beforeEnter: requireAuth},
         {path: '/notes/:notebookId', name: 'notesFromNotebook', component: Notes, beforeEnter: requireAuth},
         {path: '/add-note', name: 'addNote', component: AddNote, beforeEnter: requireAuth},
         {path: '/add-notebook', name: 'AddNotebook', component: AddNotebook, beforeEnter: requireAuth},

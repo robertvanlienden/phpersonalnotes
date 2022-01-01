@@ -111,8 +111,7 @@ export default {
           content: this.content,
           notebook: this.notebook
         }).then((response) => {
-          this.response = true;
-          this.responseMessage = "Note " +  response.title + " is added!";
+          this.$router.push({ path: '/note/' + response.id, query: { new: 'true' } })
         }).catch((error) => {
           console.log(error.response);
           this.error = true;

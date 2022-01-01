@@ -19,10 +19,9 @@
         v-if="warning">
       {{ warningMessage }}
     </v-alert>
-    <v-progress-circular
-        v-if="!notebooks"
-        indeterminate
-    ></v-progress-circular>
+    <div v-if="!notebooks.length">
+      No notebooks found! <router-link to="/add-notebook">Add a notebook</router-link>
+    </div>
 
     <v-card
         v-for="notebook in notebooks"
