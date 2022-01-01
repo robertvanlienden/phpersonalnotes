@@ -6,6 +6,7 @@
         color="primary accent-4"
         dark
     >
+
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-toolbar-title><router-link to="/" class="grey--text text--darken-4">PHPersonal Notes</router-link></v-toolbar-title>

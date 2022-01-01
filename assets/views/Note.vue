@@ -1,10 +1,7 @@
 <template>
   <div>
     <div>
-      <h1 class="d-inline">Notes</h1>
-      <v-btn class="ml-4" color="primary accent-4" elevation="1">
-        <v-icon @click="refreshNotes">mdi-reload</v-icon>
-      </v-btn>
+      <h1 class="d-inline">Note {{ note.title }}</h1>
     </div>
     <v-alert
         type="error"
@@ -18,8 +15,13 @@
         v-if="warning">
       {{ warningMessage }}
     </v-alert>
+    <v-alert
+        type="success"
+        dismissible
+        v-if="success">
+      {{ successMessage }}
+    </v-alert>
         <v-card
-            v-for="note in notes"
             elevation="3"
             class="ma-5 pa-2"
         >
@@ -27,6 +29,10 @@
 
           <v-card-text>
             {{ note.content }}
+          </v-card-text>
+
+          <v-card-text>
+            <strong>Notebook:</strong> {{ note.notebook.title }}
           </v-card-text>
 
           <v-card-actions>
@@ -48,7 +54,7 @@
 
               <v-card>
                 <v-card-title class="text-h5 grey lighten-2">
-                  Edit notebook {{ note.title}}
+                  Edit notebook {{ note.title }}
                 </v-card-title>
 
                 <v-card-text>
@@ -84,16 +90,24 @@ export default {
       error: false,
       errorMessage: "",
       warning: false,
-      warningMessage: ""
+      warningMessage: "",
+      success: false,
+      successMessage: ""
     }
   },
   computed: {
-    notes () {
-      return store.getters.getNotes(parseInt(this.$route.params.notebookId));
+    note() {
+      return store.getters.getNote(parseInt(this.$route.params.noteId));
     }
   },
   created(){
     this.$store.dispatch('setNotes')
+        .then(() => {
+          if (this.$route.query.new) {
+            this.success = true;
+            this.successMessage = "Note " + this.note.title + " created!";
+          }
+        })
         .catch(() => {
           this.errorMessage = "Whoops! Something went wrong, try again later";
           this.error = true;
@@ -105,13 +119,6 @@ export default {
     }
   },
   methods: {
-    refreshNotes() {
-      this.$store.dispatch('setNotes')
-        .catch(() => {
-            this.errorMessage = "Can't update notes! Try again later.";
-            this.error = true;
-        });
-    },
     deleteNote(id, name) {
       if (!confirm("Are you sure you want to delete the note " + name + "? This will be definitive")) {
         return;

@@ -66,6 +66,9 @@ export default new Vuex.Store({
             } else {
                 return state.notes;
             }
+        },
+        getNote: (state) => (id) => {
+            return state.notes.filter(note => note.id === id)[0];
         }
     },
     actions: {
