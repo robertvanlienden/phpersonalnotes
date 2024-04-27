@@ -26,7 +26,7 @@ RUN set -eux; \
 
 WORKDIR /app
 
-COPY composer.json composer.lock package.json symfony.lock webpack.config.js ./
+COPY composer.json package.json symfony.lock webpack.config.js yarn.lock ./
 
 RUN set -eux; \
     composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest; \

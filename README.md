@@ -41,7 +41,7 @@ But it should be possible to run PHPNotes on any environment that suits the requ
 ### Install using the included docker environment
 * `git clone git@github.com:robertvanlienden/phpersonalnotes.git`
 * create .env `cp .env.docker .env`
-* `docker-compose up` (add the `-d` flag to run the containers detached)
+* `docker compose up` (add the `-d` flag to run the containers detached)
 * Wait until all containers are up
 * generate JWT tokens `docker-compose exec php bin/console lexik:jwt:generate-keypair`
 * http://localhost:8080/
