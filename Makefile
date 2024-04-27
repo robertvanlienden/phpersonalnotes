@@ -2,7 +2,7 @@
 help : Makefile
 	@sed -n 's/^##//p' $<
 
-docker := $(shell if [ `pwd` != "/app" ]; then echo 'docker-compose exec php'; fi;)
+docker := $(shell if [ `pwd` != "/app" ]; then echo 'docker compose exec php'; fi;)
 
 
 ## up						: Get docker containers up
@@ -10,13 +10,13 @@ docker := $(shell if [ `pwd` != "/app" ]; then echo 'docker-compose exec php'; f
 ## restart					: Restart docker containers
 ## ssh						: SSH into the PHP container
 up:
-	@docker-compose up -d
+	@docker compose up -d
 down:
-	@docker-compose down
+	@docker compose down
 restart:
-	@docker-compose restart
+	@docker compose restart
 ssh:
-	@docker-compose exec php sh
+	@docker compose exec php sh
 
 ## clear-cache					: Clear cache
 ## clear-database					: Clear database, run migrations, load fixtures

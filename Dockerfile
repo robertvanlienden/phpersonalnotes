@@ -1,6 +1,6 @@
-ARG ALPINE_VERSION=3.13
+ARG ALPINE_VERSION=3.16
 
-FROM php:8.0-fpm-alpine$ALPINE_VERSION AS php-fpm
+FROM php:8.2-fpm-alpine$ALPINE_VERSION AS php-fpm
 
 ARG ALPINE_VERSION
 
@@ -26,7 +26,7 @@ RUN set -eux; \
 
 WORKDIR /app
 
-COPY composer.json composer.lock package.json symfony.lock webpack.config.js ./
+COPY composer.json composer.lock package.json symfony.lock webpack.config.js yarn.lock ./
 
 RUN set -eux; \
     composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest; \
