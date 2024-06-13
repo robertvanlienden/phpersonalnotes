@@ -64,7 +64,7 @@ Please directly contact with the maintainer.
 ## Maintainers 👷
 * Robert van Lienden -  http://github.com/robertvanlienden
 * Maintainer welcome
-  * Feel free to contact with Robert if you like to actively maintain this project!
+  * Feel free to get in contact with Robert if you like to actively maintain this project!
 
 ## License 📰
 Released under BSD-3-Clause.
